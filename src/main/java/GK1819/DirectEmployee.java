@@ -1,31 +1,45 @@
 package GK1819;
 
-import java.time.LocalDate;
+import java.util.List;
 
 public class DirectEmployee extends Employee {
+	
+	public DirectEmployee() {}
+	
+	public DirectEmployee (String id, String name, String departmentName, Integer basicPay, List<WorkDay> wordDays) {
+		super(id, name, departmentName, basicPay, wordDays);
+	}
+	
+	@Override
+	public void output() {
+		super.output();
+		System.out.println("--- Payroll ---");
+		workdays.forEach(e -> {
+			System.out.println("Date: " + e.date);
+			System.out.println("Coefficients Fringe Benefits: " + e.coefficientsFringeBenefits);
+			if (e.isWork) {
+				System.out.println("Shift: " + e.shift);
+			} else {
+				System.out.println((e.beOnLeave == true ? "Absent with leave" : "Absent without leave"));
+			}
+			System.out.println("Timekeeping: " + getTimeKeeping(e));
+			System.out.println();
+		});
+		System.out.println("----- Salary -----: " + getSalary());
+	}
 
 	@Override
-	public void input() {
-		super.input();
+	public Double getTimeKeeping(WorkDay workday) {
+		Double coefficient = 0.0;
 		
-		WorkDay workDay = new WorkDay();
-		System.out.println("Nhap thong tin ngay cong: ");
-	
-		workDay.setLocalDate(LocalDate.now());
-		System.out.println("Ngay: " + workDay.getLocalDate());
-		Integer option;
-		System.out.println("Co di lam khong? 1. Co	2. Khong");
-		option = scan.nextInt();
-		if (option == 1) {
-			System.out.println("Ca nao? 1. Ca 1	2. Ca 2");
-			option = scan.nextInt();
-			workDay.setShift(option);
-		} else {
-			System.out.println("Nghi Phep hay Khong Phep? 1. Phep	2. Khong phep" );
-			option = scan.nextInt();
-			workDay.setBeOnLeave(option == 1 ? true : false);
+		if (workday.shift != null) {
+			coefficient = (workday.shift == 1 ? 1.0 : 1.5);
 		}
-		this.getWorkdays().add(workDay);	
+		if (workday.beOnLeave != null) {
+			coefficient = (workday.beOnLeave == true ? 0.5 : 0.0);
+		}
+		
+		return (basicPay + basicPay * (coefficient + workday.coefficientsFringeBenefits));
 	}
 
 }

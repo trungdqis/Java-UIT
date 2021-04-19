@@ -1,27 +1,43 @@
 package GK1819;
 
-import java.time.LocalDate;
+import java.util.List;
 
 public class IndirectEmployee extends Employee {
 	
-	@Override
-	public void input() {
-		super.input();
-		
-		WorkDay workDay = new WorkDay();
-		System.out.println("Nhap thong tin ngay cong: ");
+	public IndirectEmployee() {}
 	
-		workDay.setLocalDate(LocalDate.now());
-		System.out.println("Ngay: " + workDay.getLocalDate());
-		System.out.println("Co di lam khong? 1. Co	2. Khong");
-		Integer option = scan.nextInt();
-		if (option == 1) {
-			workDay.setWork(true);
-		} else {
-			System.out.println("Nghi Phep hay Khong Phep? 1. Phep	2. Khong phep" );
-			option = scan.nextInt();
-			workDay.setBeOnLeave(option == 1 ? true : false);
+	public IndirectEmployee (String id, String name, String departmentName, Integer basicPay, List<WorkDay> wordDays) {
+		super(id, name, departmentName, basicPay, wordDays);
+	}
+	
+	@Override
+	public void output() {
+		super.output();
+		System.out.println("--- Payroll ---");
+		workdays.forEach(e -> {
+			System.out.println("Date: " + e.date);
+			if (e.isWork) {
+				System.out.println("Absent");
+			} else {
+				System.out.println((e.beOnLeave == true ? "Absent with leave" : "Absent without leave"));
+			}
+			System.out.println("Timekeeping: " + getTimeKeeping(e));
+			System.out.println();
+		});
+		System.out.println("----- Salary -----: " + getSalary());
+	}
+
+	@Override
+	public Double getTimeKeeping(WorkDay workday) {
+		Double coefficient = 0.0;
+		
+		if (workday.shift != null) {
+			coefficient = 1.0;
 		}
-		this.getWorkdays().add(workDay);	
+		if (workday.beOnLeave != null) {
+			coefficient = (workday.beOnLeave == true ? 0.5 : 0.0);
+		}
+		
+		return (basicPay + basicPay * coefficient);
 	}
 }
