@@ -1,1 +1,1 @@
-# Java-UIT
+All projects related to Java subject at UIT !
